@@ -118,6 +118,51 @@ PolygonCollider2D:
     type: 3}
   m_PrefabInstance: {fileID: 1191868469}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &25635659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 25635661}
+  - component: {fileID: 25635660}
+  m_Layer: 0
+  m_Name: PlayerScreenController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &25635660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25635659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38f174861c32442b79763a2e4672105a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 1
+  currentMap: {fileID: 586155169}
+--- !u!4 &25635661
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25635659}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -23.13, y: -21.63, z: -2.1066062}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &37082479
 GameObject:
   m_ObjectHideFlags: 0
@@ -2051,8 +2096,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c563a945720744b22b1587658cd3fe7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  followTarget: {fileID: 1600032987}
-  followSpeed: 3
+  followTarget: {fileID: 25635659}
+  followSpeed: 10
   currentMap: {fileID: 586155169}
 --- !u!20 &519420031
 Camera:
@@ -13672,7 +13717,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 354e193d77f7a408586011be572390de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mooveSpeed: 1
+  moveSpeed: 1
+  timeBetweenMove: 2
+  timeToMove: 1
 --- !u!50 &1600032992
 Rigidbody2D:
   serializedVersion: 4

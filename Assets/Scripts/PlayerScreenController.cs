@@ -3,14 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class CameraController : MonoBehaviour
+public class PlayerScreenController : MonoBehaviour
 {
-
-    public GameObject followTarget;
-    private Vector3 targetPosition;
-
-    public float followSpeed;
-
+    public float moveSpeed;
     public GameObject currentMap;
     private Tilemap currentTileMap; 
 
@@ -38,16 +33,22 @@ public class CameraController : MonoBehaviour
         currentMapMaxY = currentMap.transform.position.y;
         currentMapMinY = currentMap.transform.position.y - (mapExtents.y * 2);
     }
-
     void Update()
-    {   
-        targetPosition = new Vector3(followTarget.transform.position.x, followTarget.transform.position.y, transform.position.z);
+    {
+        if (Input.GetAxisRaw("Horizontal") > 0.5 || Input.GetAxisRaw("Horizontal") < -0.5) {
+            float movement = Input.GetAxisRaw("Horizontal") * moveSpeed * Time.deltaTime;
+            float newLocation = gameObject.transform.position.x + movement;
+            if (newLocation >= currentMapMinX && newLocation <= currentMapMaxX) {
+                transform.Translate(new Vector3(movement, 0, 0));
+            }
+        }
 
-        if (targetPosition.x + cameraAspect > currentMapMaxX) targetPosition.x = currentMapMaxX - cameraAspect;
-        if (targetPosition.x - cameraAspect < currentMapMinX) targetPosition.x = currentMapMinX + cameraAspect;
-        if (targetPosition.y + cameraOrtho > currentMapMaxY) targetPosition.y = currentMapMaxY - cameraOrtho;
-        if (targetPosition.y - cameraOrtho < currentMapMinY) targetPosition.y = currentMapMinY + cameraOrtho;
-
-        transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
+        if (Input.GetAxisRaw("Vertical") > 0.5 || Input.GetAxisRaw("Vertical") < -0.5) {
+            float movement = Input.GetAxisRaw("Vertical") * moveSpeed * Time.deltaTime;
+            float newLocation = gameObject.transform.position.y + movement;
+            if (newLocation >= currentMapMinY && newLocation <= currentMapMaxY) {
+                transform.Translate(new Vector3(0, movement, 0));
+            }
+        }
     }
 }

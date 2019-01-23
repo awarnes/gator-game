@@ -4,23 +4,47 @@ using UnityEngine;
 
 public class GatorController : MonoBehaviour
 {
-    public float mooveSpeed;
+    public float moveSpeed;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    private Rigidbody2D myRigidbody;
+
+    private bool moving;
+
+    public float timeBetweenMove;
+    private float timeBetweenMoveCounter;
+    public float timeToMove;
+    private float timeToMoveCounter;
+
+    private Vector3 moveDirection;
+
+    void Start() {
+        myRigidbody = GetComponent<Rigidbody2D>();
+
+        timeBetweenMoveCounter = Random.Range(timeBetweenMove * 0.75f, timeBetweenMove * 1.25f);
+        timeToMoveCounter = Random.Range(timeToMove * 0.75f, timeToMove * 1.25f);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetAxisRaw("Horizontal") > 0.5 || Input.GetAxisRaw("Horizontal") < -0.5) {
-            transform.Translate(new Vector3(Input.GetAxisRaw("Horizontal") * mooveSpeed * Time.deltaTime, 0, 0));
+    void Update() {
+        if (moving) {
+            timeToMoveCounter -= Time.deltaTime;
+            myRigidbody.velocity = moveDirection;
+
+            if (timeToMoveCounter < 0) {
+                moving = false;
+                timeBetweenMoveCounter = timeBetweenMove;
+            }
+        } else {
+            timeBetweenMoveCounter -= Time.deltaTime;
+            myRigidbody.velocity = Vector2.zero;
+
+            if (timeBetweenMoveCounter < 0) {
+                moving = true;
+                timeToMoveCounter = timeToMove;
+
+                moveDirection = new Vector3(Random.Range(-1f, 1f) * moveSpeed, Random.Range(-1f, 1f) * moveSpeed, 0);
+            }
         }
 
-        if (Input.GetAxisRaw("Vertical") > 0.5 || Input.GetAxisRaw("Vertical") < -0.5) {
-            transform.Translate(new Vector3(0, Input.GetAxisRaw("Vertical") * mooveSpeed * Time.deltaTime, 0));
-        }
+        gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
     }
 }

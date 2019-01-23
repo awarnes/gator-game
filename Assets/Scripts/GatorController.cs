@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class GatorController : MonoBehaviour
-{
+public class GatorController : MonoBehaviour {
     public float moveSpeed;
 
     private Rigidbody2D myRigidbody;
@@ -46,5 +46,9 @@ public class GatorController : MonoBehaviour
         }
 
         gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
+    }
+
+    void OnMouseDown() {
+        CameraController.followTarget = gameObject;
     }
 }

@@ -26,7 +26,7 @@ public class CameraController : MonoBehaviour {
 
     void Start() {
         foreach (Tilemap map in currentMap.GetComponentsInChildren<Tilemap>()) {
-            if (map.name == "base") currentTileMap = map;
+            if (map.name == "main_base") currentTileMap = map;
         }
 
         mapExtents = currentTileMap.localBounds.extents;
@@ -37,7 +37,7 @@ public class CameraController : MonoBehaviour {
         currentMapMinX = currentMap.transform.position.x;
         currentMapMaxY = currentMap.transform.position.y;
         currentMapMinY = currentMap.transform.position.y - (mapExtents.y * 2);
-
+        
         targetPosition = new Vector3((currentMapMaxX + currentMapMinX) / 2, (currentMapMaxY + currentMapMinY) / 2, transform.position.z);
 
     }
@@ -57,9 +57,8 @@ public class CameraController : MonoBehaviour {
         } else {
             targetPosition = new Vector3(followTarget.transform.position.x, followTarget.transform.position.y, transform.position.z);
         }
-
-        if (targetPosition.x + cameraAspect > currentMapMaxX) targetPosition.x = currentMapMaxX - cameraAspect;
-        if (targetPosition.x - cameraAspect < currentMapMinX) targetPosition.x = currentMapMinX + cameraAspect;
+        if (targetPosition.x + cameraAspect * cameraOrtho > currentMapMaxX) targetPosition.x = currentMapMaxX - cameraAspect * cameraOrtho;
+        if (targetPosition.x - cameraAspect * cameraOrtho < currentMapMinX) targetPosition.x = currentMapMinX + cameraAspect * cameraOrtho;
         if (targetPosition.y + cameraOrtho > currentMapMaxY) targetPosition.y = currentMapMaxY - cameraOrtho;
         if (targetPosition.y - cameraOrtho < currentMapMinY) targetPosition.y = currentMapMinY + cameraOrtho;
 

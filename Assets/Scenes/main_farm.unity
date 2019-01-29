@@ -210,6 +210,13 @@ MonoBehaviour:
   followSpeed: 60
   zoomTime: 5
   currentMap: {fileID: 390972593}
+  currentTileMap: {fileID: 131040301}
+--- !u!1839735485 &131040301 stripped
+Tilemap:
+  m_CorrespondingSourceObject: {fileID: 8195094279510102552, guid: 6c49f4641fd9a44318c14ed0bde143a7,
+    type: 3}
+  m_PrefabInstance: {fileID: 574004748}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &307218565
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -424,6 +431,10 @@ PrefabInstance:
     - target: {fileID: 100004, guid: 6c49f4641fd9a44318c14ed0bde143a7, type: 3}
       propertyPath: m_TagString
       value: growOut_base
+      objectReference: {fileID: 0}
+    - target: {fileID: 100134, guid: 6c49f4641fd9a44318c14ed0bde143a7, type: 3}
+      propertyPath: m_Name
+      value: main
       objectReference: {fileID: 0}
     - target: {fileID: 3664157343022684178, guid: 6c49f4641fd9a44318c14ed0bde143a7,
         type: 3}

@@ -22,7 +22,6 @@ namespace GatorGame {
         public static bool isZooming; // true while zooming to a zone
         public static bool inZone; // Allow follow targets when in a zone.
 
-        private Rect growOutBounds;
         private List<Zone> zones = new List<Zone>();
         private Vector3 mapCellSize;
 
@@ -31,8 +30,10 @@ namespace GatorGame {
 
         public static Zone? zoomTarget;
 
+        // Full map of area using Tiled and SuperTiled2Unity
         public GameObject currentMap;
-        private Tilemap currentTileMap; 
+        // Individual layers of map. Also used for individual zones.
+        public Tilemap currentTileMap; 
 
         private Vector2 mapExtents;
         private float cameraAspect; // x
@@ -44,35 +45,36 @@ namespace GatorGame {
         private float currentMapMinY;
 
         void Start() {
-            foreach (Tilemap map in currentMap.GetComponentsInChildren<Tilemap>()) {
-                if (map.name == "main_base") currentTileMap = map;
-            }
-
             mapExtents = currentTileMap.localBounds.extents;
-
-            currentMapMaxX = currentMap.transform.position.x + (mapExtents.x * 2);
-            currentMapMinX = currentMap.transform.position.x;
-            currentMapMaxY = currentMap.transform.position.y;
-            currentMapMinY = currentMap.transform.position.y - (mapExtents.y * 2);
             
+            SetZoneBounds();
+
             targetPosition = new Vector3((currentMapMaxX + currentMapMinX) / 2, (currentMapMaxY + currentMapMinY) / 2, transform.position.z);
             fullScreenZoom = Camera.main.orthographicSize;
 
+            // Get main map cell sizes
             mapCellSize = currentMap.GetComponent<Grid>().cellSize;
-            // Handle adding zones to the list here?
-            growOutBounds = GetZoneRect("growOut");
-            zones.Add(new Zone{name="growOut", boundingBox=growOutBounds});
+
+            // Handle adding zones to the list here
+            // TODO: Handle in more perfomant way.
+            // When we have more objects this could become very slow
+            foreach (GameObject layer in GameObject.FindObjectsOfType<GameObject>()) {
+                if (layer.name.Contains("_base")) {
+                    Rect zoneRect = GetZoneRect(layer.name);
+                    zones.Add(new Zone{name=layer.name, boundingBox=zoneRect});
+                }
+            }
         }
 
         void Update() {
-            // Find zone to zoom to
+            // Find zone to zoom to.
             if (Input.GetMouseButtonDown(0) && !inZone) {  
                 zoomTarget = GetZoneToZoom();     
             }
 
-            // Click and drag
-            if (Input.GetMouseButton(0)) {
-                if (Input.GetAxis("Mouse X") != 0 && Input.GetAxis("Mouse Y")!=0){
+            // Click and drag implemenation
+            if (Input.GetMouseButton(0) && !isZooming) {
+                if (Input.GetAxis("Mouse X") != 0 && Input.GetAxis("Mouse Y") != 0){
                     float mouseMoveX = transform.position.x + Input.GetAxis("Mouse X") * followSpeed * Time.deltaTime * -1;
                     float mouseMoveY = transform.position.y + Input.GetAxis("Mouse Y") * followSpeed * Time.deltaTime * -1;
 
@@ -96,7 +98,7 @@ namespace GatorGame {
                 zoomTarget = null;
             }
 
-            SetZone();
+            SetZoneBounds();
 
             // Where to follow if following a target.
             if (followTarget != null) {
@@ -147,8 +149,8 @@ namespace GatorGame {
             return Camera.main.orthographicSize >= 0.5 && Camera.main.orthographicSize <= 1.001;
         }
 
-        // Set current map to current focus (zone/full)
-        void SetZone() {
+        // Set currentMap bounds to current focus (zone/full)
+        void SetZoneBounds() {
             if (zoomTarget != null) {
                 currentMapMaxX = zoomTarget?.boundingBox.xMax ?? 0;
                 currentMapMinX = zoomTarget?.boundingBox.xMin ?? 0;
@@ -177,7 +179,7 @@ namespace GatorGame {
         // Returns the calculated Rect for each zone associated with the current map so they can be iterated over.
         private Rect GetZoneRect(string zoneName) {
             // All zones must be named with a _base at the end.
-            GameObject zone = GameObject.Find(zoneName + "_base");
+            GameObject zone = GameObject.Find(zoneName);
             Bounds zoneBounds = zone.GetComponent<TilemapRenderer>().bounds;
 
             Vector2 bottomRightCorner = new Vector2(zoneBounds.center.x + zoneBounds.extents.x, zoneBounds.center.y - zoneBounds.extents.y);

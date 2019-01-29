@@ -6,8 +6,8 @@ namespace GatorGame {
     enum Gender {
         female, male
     }
-    public class Alligator
-    {
+
+    public class Alligator {
 
         private string gatorName;
 

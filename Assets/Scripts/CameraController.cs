@@ -2,121 +2,195 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.Events;
+using SuperTiled2Unity;
 
-public class CameraController : MonoBehaviour {
-
-    public static GameObject followTarget;
-
-    private Vector3 targetPosition;
-    private float fullScreenZoom;
-
-    public float followSpeed;
-    public float zoomTime;
-    public static bool isZooming; // true while zooming to a zone
-    public static bool inZone; // Allow follow targets when in a zone.
-
-    public GameObject currentMap;
-    private Tilemap currentTileMap; 
-
-    private Vector2 mapExtents;
-    private float cameraAspect; // x
-    private float cameraOrtho; // y
-
-    private float currentMapMaxX;
-    private float currentMapMinX;
-    private float currentMapMaxY;
-    private float currentMapMinY;
-
-    void Start() {
-        foreach (Tilemap map in currentMap.GetComponentsInChildren<Tilemap>()) {
-            if (map.name == "main_base") currentTileMap = map;
-        }
-
-        mapExtents = currentTileMap.localBounds.extents;
-
-        currentMapMaxX = currentMap.transform.position.x + (mapExtents.x * 2);
-        currentMapMinX = currentMap.transform.position.x;
-        currentMapMaxY = currentMap.transform.position.y;
-        currentMapMinY = currentMap.transform.position.y - (mapExtents.y * 2);
-        
-        targetPosition = new Vector3((currentMapMaxX + currentMapMinX) / 2, (currentMapMaxY + currentMapMinY) / 2, transform.position.z);
-        fullScreenZoom = Camera.main.orthographicSize;
+namespace GatorGame {
+    public struct Zone {
+        public string name;
+        public Rect boundingBox;
     }
 
-    void Update() {
-        if (Input.GetMouseButton(0)) {
-            if (Input.GetAxis("Mouse X") != 0 && Input.GetAxis("Mouse Y")!=0){
-                targetPosition = new Vector3(transform.position.x + Input.GetAxis("Mouse X") * followSpeed * -1 * Time.deltaTime, transform.position.y + Input.GetAxis("Mouse Y") * followSpeed * Time.deltaTime * -1, transform.position.z);
-                followTarget = null;
-                isZooming = false;
+    public class CameraController : MonoBehaviour {
+
+        public static GameObject followTarget;
+
+        private Vector3 targetPosition;
+        private float fullScreenZoom;
+
+        public float followSpeed;
+        public float zoomTime;
+        public static bool isZooming; // true while zooming to a zone
+        public static bool inZone; // Allow follow targets when in a zone.
+
+        private Rect growOutBounds;
+        private List<Zone> zones = new List<Zone>();
+        private Vector3 mapCellSize;
+
+        private float zoneHeight; 
+        private float zoneWidth;
+
+        public static Zone? zoomTarget;
+
+        public GameObject currentMap;
+        private Tilemap currentTileMap; 
+
+        private Vector2 mapExtents;
+        private float cameraAspect; // x
+        private float cameraOrtho; // y
+
+        private float currentMapMaxX;
+        private float currentMapMinX;
+        private float currentMapMaxY;
+        private float currentMapMinY;
+
+        void Start() {
+            foreach (Tilemap map in currentMap.GetComponentsInChildren<Tilemap>()) {
+                if (map.name == "main_base") currentTileMap = map;
             }
-        }
 
-        // Whether camera is focused on a zone or not.
-        if (FarmScreenController.zoomTarget != null && !isZooming){
-            inZone = true;
-        } else {
-            inZone = false;
-        }
-        // Remove zoomTarget when ESC pressed
-        if (Input.GetKeyDown(KeyCode.Escape)) {
-            FarmScreenController.zoomTarget = null;
-        }
-        SetZone();
+            mapExtents = currentTileMap.localBounds.extents;
 
-        if (followTarget != null) {
-            targetPosition = new Vector3(followTarget.transform.position.x, followTarget.transform.position.y, transform.position.z);
-        }
-
-        // Maintain camera position to be within bounds of map
-        if (targetPosition.x + Camera.main.aspect * Camera.main.orthographicSize > currentMapMaxX) {
-            targetPosition.x = currentMapMaxX - Camera.main.aspect * Camera.main.orthographicSize;
-        }
-
-        if (targetPosition.x - Camera.main.aspect * Camera.main.orthographicSize < currentMapMinX) {
-            targetPosition.x = currentMapMinX + Camera.main.aspect * Camera.main.orthographicSize;
-        }
-        if (targetPosition.y + Camera.main.orthographicSize > currentMapMaxY){
-            targetPosition.y = currentMapMaxY - Camera.main.orthographicSize;
-        } 
-        if (targetPosition.y - Camera.main.orthographicSize < currentMapMinY){
-            targetPosition.y = currentMapMinY + Camera.main.orthographicSize;
-        }
-
-        // Move camera
-        if (FarmScreenController.zoomTarget == null) {
-            transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
-            Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, fullScreenZoom, zoomTime * Time.deltaTime);
-        } else if (isZooming) {
-            Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, 1, zoomTime * Time.deltaTime);
-            transform.position = Vector3.Lerp(transform.position, new Vector3(FarmScreenController.zoomTarget?.boundingBox.center.x ?? 0, FarmScreenController.zoomTarget?.boundingBox.center.y ?? 0, -10), zoomTime * Time.deltaTime);
-            
-            if (HasZoomed()) {
-                isZooming = false;
-            }
-        } else {
-            transform.position = Vector3.Lerp(transform.position, targetPosition, 5 * Time.deltaTime);
-        }
-    }
-
-    // Finished zooming
-    private bool HasZoomed() {
-        return Camera.main.orthographicSize >= 0.5 && Camera.main.orthographicSize <= 1.001;
-    }
-
-    // Set current map to current focus (zone/full)
-    void SetZone() {
-        if (FarmScreenController.zoomTarget != null) {
-            currentMapMaxX = FarmScreenController.zoomTarget?.boundingBox.xMax ?? 0;
-            currentMapMinX = FarmScreenController.zoomTarget?.boundingBox.xMin ?? 0;
-            currentMapMaxY = FarmScreenController.zoomTarget?.boundingBox.yMax ?? 0;
-            currentMapMinY = FarmScreenController.zoomTarget?.boundingBox.yMin ?? 0;
-        } else {
             currentMapMaxX = currentMap.transform.position.x + (mapExtents.x * 2);
             currentMapMinX = currentMap.transform.position.x;
             currentMapMaxY = currentMap.transform.position.y;
             currentMapMinY = currentMap.transform.position.y - (mapExtents.y * 2);
+            
+            targetPosition = new Vector3((currentMapMaxX + currentMapMinX) / 2, (currentMapMaxY + currentMapMinY) / 2, transform.position.z);
+            fullScreenZoom = Camera.main.orthographicSize;
+
+            mapCellSize = currentMap.GetComponent<Grid>().cellSize;
+            // Handle adding zones to the list here?
+            growOutBounds = GetZoneRect("growOut");
+            zones.Add(new Zone{name="growOut", boundingBox=growOutBounds});
+        }
+
+        void Update() {
+            // Find zone to zoom to
+            if (Input.GetMouseButtonDown(0) && !inZone) {  
+                zoomTarget = GetZoneToZoom();     
+            }
+
+            // Click and drag
+            if (Input.GetMouseButton(0)) {
+                if (Input.GetAxis("Mouse X") != 0 && Input.GetAxis("Mouse Y")!=0){
+                    float mouseMoveX = transform.position.x + Input.GetAxis("Mouse X") * followSpeed * Time.deltaTime * -1;
+                    float mouseMoveY = transform.position.y + Input.GetAxis("Mouse Y") * followSpeed * Time.deltaTime * -1;
+
+                    targetPosition = new Vector3(mouseMoveX, mouseMoveY, transform.position.z);
+
+                    // Reset camera if moving around screen manually.
+                    followTarget = null;
+                    isZooming = false;
+                }
+            }
+
+            // Whether camera is focused on a zone or not.
+            if (zoomTarget != null && !isZooming){
+                inZone = true;
+            } else {
+                inZone = false;
+            }
+
+            // Remove zoomTarget when ESC pressed
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                zoomTarget = null;
+            }
+
+            SetZone();
+
+            // Where to follow if following a target.
+            if (followTarget != null) {
+                targetPosition = new Vector3(followTarget.transform.position.x, followTarget.transform.position.y, transform.position.z);
+            }
+
+            // Maintain camera position to be within bounds of a given map.
+            if (targetPosition.x + Camera.main.aspect * Camera.main.orthographicSize > currentMapMaxX) {
+                targetPosition.x = currentMapMaxX - Camera.main.aspect * Camera.main.orthographicSize;
+            }
+
+            if (targetPosition.x - Camera.main.aspect * Camera.main.orthographicSize < currentMapMinX) {
+                targetPosition.x = currentMapMinX + Camera.main.aspect * Camera.main.orthographicSize;
+            }
+
+            if (targetPosition.y + Camera.main.orthographicSize > currentMapMaxY){
+                targetPosition.y = currentMapMaxY - Camera.main.orthographicSize;
+            }
+
+            if (targetPosition.y - Camera.main.orthographicSize < currentMapMinY){
+                targetPosition.y = currentMapMinY + Camera.main.orthographicSize;
+            }
+
+            // Move the camera around the scene.
+            if (zoomTarget == null) {
+                // Without a zoomTarget the camera should zoom to the whole screen.
+                transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
+                Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, fullScreenZoom, zoomTime * Time.deltaTime);
+            } else if (isZooming) {
+                // If zooming into a zone.
+                Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, 1, zoomTime * Time.deltaTime);
+                transform.position = Vector3.Lerp(transform.position, new Vector3(zoomTarget?.boundingBox.center.x ?? 0, zoomTarget?.boundingBox.center.y ?? 0, -10), zoomTime * Time.deltaTime);
+                
+                // If we're done zooming, say so.
+                // TODO: Not fully disallowing mouse input during zoom transition, can lead to weird bugs.
+                if (HasZoomed()) {
+                    isZooming = false;
+                }
+            } else {
+                // Click and drag and followTarget moves
+                transform.position = Vector3.Lerp(transform.position, targetPosition, 5 * Time.deltaTime);
+            }
+        }
+
+        // Verify that zooming has finished so that users can regain control of camera.
+        // TODO: More precise, mathematical way of verifing that the camera has finished zooming.
+        private bool HasZoomed() {
+            return Camera.main.orthographicSize >= 0.5 && Camera.main.orthographicSize <= 1.001;
+        }
+
+        // Set current map to current focus (zone/full)
+        void SetZone() {
+            if (zoomTarget != null) {
+                currentMapMaxX = zoomTarget?.boundingBox.xMax ?? 0;
+                currentMapMinX = zoomTarget?.boundingBox.xMin ?? 0;
+                currentMapMaxY = zoomTarget?.boundingBox.yMax ?? 0;
+                currentMapMinY = zoomTarget?.boundingBox.yMin ?? 0;
+            } else {
+                currentMapMaxX = currentMap.transform.position.x + (mapExtents.x * 2);
+                currentMapMinX = currentMap.transform.position.x;
+                currentMapMaxY = currentMap.transform.position.y;
+                currentMapMinY = currentMap.transform.position.y - (mapExtents.y * 2);
+            }
+        }
+
+        // Returns the zone that was clicked on, or null.
+        private Zone? GetZoneToZoom() {
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            isZooming = true;
+            foreach (Zone zone in zones) {
+                if (zone.boundingBox.Contains(mousePosition)) {
+                    return zone;
+                }
+            } 
+            return null;
+        }
+
+        // Returns the calculated Rect for each zone associated with the current map so they can be iterated over.
+        private Rect GetZoneRect(string zoneName) {
+            // All zones must be named with a _base at the end.
+            GameObject zone = GameObject.Find(zoneName + "_base");
+            Bounds zoneBounds = zone.GetComponent<TilemapRenderer>().bounds;
+
+            Vector2 bottomRightCorner = new Vector2(zoneBounds.center.x + zoneBounds.extents.x, zoneBounds.center.y - zoneBounds.extents.y);
+            
+            // TODO: This seems to be digging deeper than it really should.
+            foreach (SuperTiled2Unity.CustomProperty prop in zone.GetComponent<SuperCustomProperties>().m_Properties) {
+                // TODO: Each zone's base object must record these as there's no easy way to verify the height/width in tiles.
+                if (prop.m_Name == "height") zoneHeight = float.Parse(prop.m_Value) * mapCellSize.y;
+                if (prop.m_Name == "width") zoneWidth = float.Parse(prop.m_Value) * mapCellSize.x;
+            }
+
+            Vector2 topLeftCorner = new Vector2(bottomRightCorner.x - zoneWidth, bottomRightCorner.y + zoneHeight);
+            return Rect.MinMaxRect(topLeftCorner.x, bottomRightCorner.y, bottomRightCorner.x, topLeftCorner.y);
         }
     }
 }

@@ -207,7 +207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c563a945720744b22b1587658cd3fe7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  followSpeed: 30
+  followSpeed: 60
   zoomTime: 5
   currentMap: {fileID: 390972593}
 --- !u!1001 &307218565

@@ -20,9 +20,13 @@ namespace GatorGame {
 
         public AlligatorData gatorData;
 
+        public GameObject gatorInfoModal;
+
         void Start() {
             myRigidbody = GetComponent<Rigidbody2D>();
             gatorData = new AlligatorData();
+
+            gatorInfoModal = GameObject.Find("GatorInfoModal");
 
             timeBetweenMoveCounter = Random.Range(timeBetweenMove * 0.75f, timeBetweenMove * 1.25f);
             timeToMoveCounter = Random.Range(timeToMove * 0.75f, timeToMove * 1.25f);
@@ -54,18 +58,15 @@ namespace GatorGame {
 
         void OnMouseDown() {
             SetThisAsFollowTarget();
-            PrintNameAndMeasurements();
+            DisplayGatorDataModal();
         }
 
         public void SetThisAsFollowTarget() {
             CameraController.followTarget = gameObject;
         }
 
-        public void PrintNameAndMeasurements() {
-            Debug.Log("NAME: " + gatorData.GatorName);
-            Debug.Log("Height: " + gatorData.measurements.height);
-            Debug.Log("Weight: " + gatorData.measurements.weight);
-            Debug.Log("Girth: " + gatorData.measurements.girth);
+        public void DisplayGatorDataModal() {
+            gatorInfoModal.GetComponent<ToggleModal>().Toggle();
         }
     }
 }

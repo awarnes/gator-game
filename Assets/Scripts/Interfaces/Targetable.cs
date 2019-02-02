@@ -6,7 +6,7 @@ namespace GatorGame {
   */
   public interface ITargetable {
 
-    // Should be a function that sets CameraController.follow target to associtated object.
+    // Should be a function that sets CameraController.follow target to associated object.
     void SetThisAsFollowTarget();
   }
 }

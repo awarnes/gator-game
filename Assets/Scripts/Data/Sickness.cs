@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace GatorGame {
-    public class Sickness
-    {
+    public class Sickness {
         
     }
 }

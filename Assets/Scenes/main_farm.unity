@@ -384,6 +384,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: FullFarmMap
       objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: 6c49f4641fd9a44318c14ed0bde143a7, type: 3}
+      propertyPath: m_TagString
+      value: growOut_base
+      objectReference: {fileID: 0}
+    - target: {fileID: 100134, guid: 6c49f4641fd9a44318c14ed0bde143a7, type: 3}
+      propertyPath: m_Name
+      value: main
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 6c49f4641fd9a44318c14ed0bde143a7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -78
@@ -427,14 +435,6 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 6c49f4641fd9a44318c14ed0bde143a7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100004, guid: 6c49f4641fd9a44318c14ed0bde143a7, type: 3}
-      propertyPath: m_TagString
-      value: growOut_base
-      objectReference: {fileID: 0}
-    - target: {fileID: 100134, guid: 6c49f4641fd9a44318c14ed0bde143a7, type: 3}
-      propertyPath: m_Name
-      value: main
       objectReference: {fileID: 0}
     - target: {fileID: 3664157343022684178, guid: 6c49f4641fd9a44318c14ed0bde143a7,
         type: 3}
@@ -3447,6 +3447,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 960
+      objectReference: {fileID: 0}
+    - target: {fileID: 9065637481447745748, guid: bfcb05d3973de408885188e1b3b06173,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9031949253165861537, guid: bfcb05d3973de408885188e1b3b06173,
         type: 3}

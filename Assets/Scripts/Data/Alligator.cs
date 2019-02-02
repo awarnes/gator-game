@@ -3,56 +3,55 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace GatorGame {
-    enum Gender {
-        female, male
-    }
-
-    public class Alligator {
-
+    [System.Serializable]
+    public class AlligatorData {
         private string gatorName;
 
-        private float gatorAge;
+        public string GatorName {
+            get { return gatorName; }
+            set {
+                gatorName = value;
+            }
+        }
 
-        private Gender gatorGender;
+        private float age;
 
-        // Measurements
-        private float gatorWeight;
-        private float gatorLength;
-        private float gatorGirth;
+        public float Age {
+            get { return age; }
+        }
 
-        // private Dictionary<string, float> gatorMeasurements =
-        //     new Dictionary<string, float> {"weight", weight};
+        private Gender gender;
 
-        // public Dictionary<string, float> gatorMeasurements {
-        //     get { return }
-        // } 
+        public Gender Gender {
+            get { return gender; }
+        }
+
+        public Measurements measurements;
 
         // Health
-        private int gatorHp;
-        private int gatorHunger;
-        private int gatorThirst;
-        private int gatorTemperature;
-
-        private List<Sickness> gatorSicknesses;
+        public Health health;
 
         // Stress
-        private float gatorCrowding;
-        private float gatorEnvironmentalDisturbance;
-        private float gatorInteractionDisturbance;
+        public Stress stress;
 
         // Hide
-        private float gatorHideQuality;
-        private HidePattern gatorHidePattern;
+        public Hide hide;
 
         // Meat
-        private float gatorMeatQuality;
-        private float gatorMeatAmountEstimate;
-        private float gatorMeatAmount; //gatorWeight * .4157
+        public Meat meat;
 
-        private List<Bonus> gatorBonuses;
+        private List<Bonus> bonuses;
 
         // Genes could be a function of the standard deviation in relation to a specific gator.
         
-        
+        public AlligatorData(string name = null) {
+            if (gatorName == null) {
+                gatorName = Utilities.RandomGatorName();
+            }
+
+            measurements.girth = Random.Range(1, 15);
+            measurements.weight = Random.Range(1, 15);
+            measurements.height = Random.Range(1, 15);
+        }
     }
 }

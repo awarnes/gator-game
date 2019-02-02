@@ -67,14 +67,10 @@ namespace GatorGame {
         }
 
         void Update() {
-            // Find zone to zoom to.
-            if (Input.GetMouseButtonDown(0) && !inZone) {  
-                zoomTarget = GetZoneToZoom();     
-            }
-
-            // Click and drag implemenation
-            if (Input.GetMouseButton(0) && !isZooming) {
-                if (Input.GetAxis("Mouse X") != 0 && Input.GetAxis("Mouse Y") != 0){
+            // Just using left click
+            if (Input.GetMouseButton(0)) {
+                // Click and drag implemenation
+                if (Input.GetAxis("Mouse X") != 0 && Input.GetAxis("Mouse Y") != 0 && !isZooming){
                     float mouseMoveX = transform.position.x + Input.GetAxis("Mouse X") * followSpeed * Time.deltaTime * -1;
                     float mouseMoveY = transform.position.y + Input.GetAxis("Mouse Y") * followSpeed * Time.deltaTime * -1;
 
@@ -83,6 +79,10 @@ namespace GatorGame {
                     // Reset camera if moving around screen manually.
                     followTarget = null;
                     isZooming = false;
+                }
+                // Find zone to zoom if clicked
+                if (!inZone) {
+                    zoomTarget = GetZoneToZoom();
                 }
             }
 
@@ -176,9 +176,9 @@ namespace GatorGame {
         // Returns the zone that was clicked on, or null.
         private Zone? GetZoneToZoom() {
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            isZooming = true;
             foreach (Zone zone in zones) {
                 if (zone.boundingBox.Contains(mousePosition)) {
+                    isZooming = true;
                     return zone;
                 }
             } 

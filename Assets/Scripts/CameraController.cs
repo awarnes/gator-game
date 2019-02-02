@@ -95,7 +95,16 @@ namespace GatorGame {
 
             // Remove zoomTarget when ESC pressed
             if (Input.GetKeyDown(KeyCode.Escape)) {
-                zoomTarget = null;
+                // Close a modal before closing the zoomTarget.
+                bool wasModal = false;
+                foreach(GameObject modal in GameObject.FindGameObjectsWithTag("Modal")) {
+                    if (modal.activeSelf) {
+                        modal.SetActive(false);
+                        wasModal = true;
+                    }
+                }
+
+                if (!wasModal) zoomTarget = null;
             }
 
             SetZoneBounds();

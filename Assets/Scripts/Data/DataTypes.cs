@@ -8,8 +8,8 @@ namespace GatorGame {
     }
 
     public struct Measurements {
+        public float length;
         public float weight;
-        public float height;
         public float girth;
     }
 

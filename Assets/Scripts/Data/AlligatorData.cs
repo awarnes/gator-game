@@ -51,7 +51,7 @@ namespace GatorGame {
 
             measurements.girth = Random.Range(1, 15);
             measurements.weight = Random.Range(1, 15);
-            measurements.height = Random.Range(1, 15);
+            measurements.length = Random.Range(1, 15);
         }
     }
 }

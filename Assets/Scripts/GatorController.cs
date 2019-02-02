@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace GatorGame {
     public class GatorController : MonoBehaviour, ITargetable {
@@ -20,7 +19,7 @@ namespace GatorGame {
 
         public AlligatorData gatorData;
 
-        public GameObject gatorInfoModal;
+        private GameObject gatorInfoModal;
 
         void Start() {
             myRigidbody = GetComponent<Rigidbody2D>();
@@ -66,6 +65,7 @@ namespace GatorGame {
         }
 
         public void DisplayGatorDataModal() {
+            gatorInfoModal.GetComponent<GatorInfoModalController>().SetCurrentGatorData(gatorData);
             gatorInfoModal.GetComponent<ToggleModal>().Toggle();
         }
     }

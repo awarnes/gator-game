@@ -11,7 +11,7 @@ TipTap Studio's second production, GatorGame is a tycoon style game set on an al
 - Actual implementation of gator dynamics.
 
 ## To Build:
-1. Currently, using Unity 2018.3.2f1
+1. Currently, using Unity 2018.3.3f1
 2. Open project
 3. Go to File > Build Settings... and select `Build and Run`.
 4. Select the system you want to build for.

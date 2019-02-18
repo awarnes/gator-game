@@ -15,6 +15,10 @@ namespace GatorGame {
                 }
             }
         }
+
+        public void Destroy() {
+            Destroy(gameObject);
+        }
     }
 }
 

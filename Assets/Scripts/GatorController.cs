@@ -65,8 +65,8 @@ namespace GatorGame {
         }
 
         public void DisplayGatorDataModal() {
-            gatorInfoModal.GetComponent<GatorInfoModalController>().SetCurrentGatorData(gatorData);
-            gatorInfoModal.GetComponent<ToggleModal>().Toggle();
+            GameObject infoModal = Instantiate(gatorInfoModal);
+            infoModal.GetComponent<GatorInfoModalController>().SetCurrentGatorData(gatorData);
         }
     }
 }

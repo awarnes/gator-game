@@ -52,6 +52,19 @@ namespace GatorGame {
             measurements.girth = Random.Range(1, 15);
             measurements.weight = Random.Range(1, 15);
             measurements.length = Random.Range(1, 15);
+
+            age = 0;
+
+            gender = Random.Range(0f, 1f) > 0.5f ? Gender.Male : Gender.Female;
+
+            stress.crowding = 0;
+            stress.environment = 0;
+            stress.interaction = 0;
+
+            health.healthPoints = 100;
+            health.hunger = 100;
+            health.thirst = 100;
+            health.temperature = 95;
         }
     }
 }
